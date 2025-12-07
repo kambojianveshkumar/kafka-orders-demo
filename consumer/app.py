@@ -13,11 +13,11 @@ def main():
         try:
             consumer = KafkaConsumer(
                 TOPIC,
-                bootstrap_servers=[BROKER],
+                bootstrap_servers=[KAFKA_BROKER],
                 auto_offset_reset="earliest",
                 enable_auto_commit=True,
                 value_deserializer=lambda v: json.loads(v.decode("utf-8")),
-                api_version=(0, 10)  # IMPORTANT
+                api_version=(0, 10)
             )
             print("Consumer connected to Kafka")
         except errors.NoBrokersAvailable:
@@ -29,3 +29,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
