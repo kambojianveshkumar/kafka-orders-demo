@@ -2,11 +2,10 @@ import json
 import time
 import random
 from datetime import datetime
-from kafka import KafkaProducer
+from kafka import KafkaProducer, errors
 
-# Kafka broker running in docker compose
-KAFKA_BROKER = "kafka:9092"
-TOPIC_NAME = "orders-topic"
+BROKER = "kafka:9092"
+TOPIC = "orders-topic"
 
 def generate_order():
     return {
@@ -19,20 +18,27 @@ def generate_order():
     }
 
 def main():
-    producer = KafkaProducer(
-        bootstrap_servers=KAFKA_BROKER,
-        value_serializer=lambda v: json.dumps(v).encode('utf-8')
-    )
+    print("Producer starting...")
+    producer = None
 
-    print("Kafka Order Producer Started...")
-    
+    while producer is None:
+        try:
+            producer = KafkaProducer(
+                bootstrap_servers=[BROKER],
+                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+                api_version=(0, 10)  # IMPORTANT
+            )
+            print("Producer connected to Kafka")
+        except errors.NoBrokersAvailable:
+            print("Kafka not ready yet... retrying")
+            time.sleep(5)
+
     while True:
         order = generate_order()
-        producer.send(TOPIC_NAME, order)
+        producer.send(TOPIC, order)
         producer.flush()
         print(f"Sent: {order}")
         time.sleep(5)
-
 
 if __name__ == "__main__":
     main()
