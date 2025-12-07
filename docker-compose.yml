@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -9,7 +7,7 @@ services:
     ports:
       - "2181:2181"
 
-    kafka:
+  kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
     depends_on:
@@ -18,11 +16,10 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M"
-      KAFKA_JVM_PERFORMANCE_OPTS: "-server"
     ports:
       - "9092:9092"
 
@@ -30,11 +27,12 @@ services:
     build: ./producer
     container_name: producer
     depends_on:
-      - kafka
+      kafka:
+        condition: service_started
 
   consumer:
     build: ./consumer
     container_name: consumer
     depends_on:
-      - kafka
-
+      kafka:
+        condition: service_started
