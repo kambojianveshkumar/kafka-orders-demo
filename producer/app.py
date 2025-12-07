@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 from kafka import KafkaProducer, errors
 
-KAFKA_BROKER = "kafka:29092"
+KAFKA_BROKER = "kafka:9092"
 TOPIC = "orders-topic"
 
 def generate_order():
@@ -19,26 +19,24 @@ def generate_order():
 
 def main():
     print("Producer starting...")
-    producer = None
-
-    while producer is None:
+    while True:
         try:
             producer = KafkaProducer(
-                bootstrap_servers=[KAFKA_BROKER],
-                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                api_version=(0, 10)
+                bootstrap_servers=KAFKA_BROKER,
+                value_serializer=lambda v: json.dumps(v).encode("utf-8")
             )
-            print("Producer connected to Kafka")
-        except errors.NoBrokersAvailable:
-            print("Kafka not ready yet... retrying")
-            time.sleep(5)
+            print("Producer connected to Kafka!")
+            break
+        except Exception as e:
+            print("Kafka not ready... Retrying", e)
+            time.sleep(3)
 
     while True:
         order = generate_order()
         producer.send(TOPIC, order)
         producer.flush()
-        print(f"Sent: {order}")
-        time.sleep(5)
+        print("Sent:", order)
+        time.sleep(3)
 
 if __name__ == "__main__":
     main()
