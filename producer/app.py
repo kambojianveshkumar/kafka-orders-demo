@@ -24,9 +24,15 @@ def main():
         value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
 
+    print("Kafka Order Producer Started...")
+    
     while True:
         order = generate_order()
         producer.send(TOPIC_NAME, order)
         producer.flush()
         print(f"Sent: {order}")
+        time.sleep(5)
 
+
+if __name__ == "__main__":
+    main()
