@@ -24,9 +24,9 @@ def main():
     while producer is None:
         try:
             producer = KafkaProducer(
-                bootstrap_servers=[BROKER],
+                bootstrap_servers=[KAFKA_BROKER],
                 value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                api_version=(0, 10)  # IMPORTANT
+                api_version=(0, 10)
             )
             print("Producer connected to Kafka")
         except errors.NoBrokersAvailable:
