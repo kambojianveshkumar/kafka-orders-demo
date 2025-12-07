@@ -2,32 +2,32 @@ import json
 import time
 from kafka import KafkaConsumer, errors
 
-KAFKA_BROKER = "kafka:29092"
+KAFKA_BROKER = "kafka:9092"
 TOPIC = "orders-topic"
 
 def main():
     print("Consumer starting...")
-    consumer = None
-
-    while consumer is None:
+    while True:
         try:
             consumer = KafkaConsumer(
                 TOPIC,
-                bootstrap_servers=[KAFKA_BROKER],
+                bootstrap_servers=KAFKA_BROKER,
                 auto_offset_reset="earliest",
                 enable_auto_commit=True,
-                value_deserializer=lambda v: json.loads(v.decode("utf-8")),
-                api_version=(0, 10)
+                value_deserializer=lambda v: json.loads(v.decode("utf-8"))
             )
-            print("Consumer connected to Kafka")
-        except errors.NoBrokersAvailable:
-            print("Kafka not ready yet... retrying")
-            time.sleep(5)
+            print("Consumer connected to Kafka!")
+            break
+        except Exception as e:
+            print("Kafka not ready... Retrying", e)
+            time.sleep(3)
 
     for message in consumer:
-        print(f"Received: {message.value}")
+        print("Received:", message.value)
 
 if __name__ == "__main__":
     main()
+
+
 
 
