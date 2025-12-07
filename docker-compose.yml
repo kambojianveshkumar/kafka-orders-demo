@@ -9,7 +9,7 @@ services:
     ports:
       - "2181:2181"
 
-  kafka:
+    kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
     depends_on:
@@ -19,6 +19,10 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M"
+      KAFKA_JVM_PERFORMANCE_OPTS: "-server"
     ports:
       - "9092:9092"
 
