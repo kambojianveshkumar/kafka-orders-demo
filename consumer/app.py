@@ -2,7 +2,7 @@ import json
 import time
 from kafka import KafkaConsumer, errors
 
-BROKER = "kafka:9092"
+KAFKA_BROKER = "kafka:29092"
 TOPIC = "orders-topic"
 
 def main():
