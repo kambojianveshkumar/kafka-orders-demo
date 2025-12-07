@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 from kafka import KafkaProducer, errors
 
-BROKER = "kafka:9092"
+KAFKA_BROKER = "kafka:29092"
 TOPIC = "orders-topic"
 
 def generate_order():
